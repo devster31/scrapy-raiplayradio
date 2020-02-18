@@ -6,9 +6,33 @@
 # https://docs.scrapy.org/en/latest/topics/items.html
 
 import scrapy
+from scrapy.loader.processors import Compose, TakeFirst, MapCompose
+from scrapy.loader import ItemLoader
+from datetime import datetime
 
 
-class RaiplayRadioItem(scrapy.Item):
-    # define the fields for your item here like:
-    # name = scrapy.Field()
-    pass
+def parse_date(self, values):
+    for value in values:
+        yield datetime.strptime(value, "%d/%m/%Y")
+
+
+def parse_uuid(self, values):
+    for value in values:
+        yield value.split("-", 1)[1]
+
+
+class EpisodeLoader(ItemLoader):
+    default_input_processor = MapCompose(str.strip)
+    default_output_processor = TakeFirst()
+
+    date_in = parse_date
+    uuid_in = parse_uuid
+
+
+class Episode(scrapy.Item):
+    title = scrapy.Field()
+    url = scrapy.Field()
+    date = scrapy.Field()  # serializer= print UTC date
+    description = scrapy.Field()
+    image = scrapy.Field()
+    uuid = scrapy.Field()

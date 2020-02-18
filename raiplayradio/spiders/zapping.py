@@ -1,4 +1,5 @@
 import scrapy
+from raiplayradio.items import Episode, EpisodeLoader
 
 
 class Zapping(scrapy.Spider):
@@ -41,13 +42,15 @@ class Zapping(scrapy.Spider):
 
     def parse_episodes(self, response):
         for episode in response.css(".archivioPuntate").css("div.row.listaAudio"):
-            yield {
-                "title": episode.css("h3>a::text").get(),
-                "url": episode.xpath("@data-mediapolis").get(),
-                "date": episode.css("span.canale::text").get(),
-                "desc": episode.css("p::text").get().strip(),
-                "image": response.urljoin(episode.xpath("@data-image").get()),
-            }
+            ep = EpisodeLoader(item=Episode(), selector=episode)
+            ep.add_css("title", "h3>a::text")
+            ep.add_css("date", "span.canale::text")
+            ep.add_css("description", "p::text")
+            ep.add_xpath("uuid", "@data-uniquename")
+            img_url = response.urljoin(episode.xpath("@data-image").get())
+            ep.add_value("image", img_url)
+            item = ep.load_item()
+
             request = scrapy.Request(
                 episode.xpath("@data-mediapolis").get(),
                 callback=self.resolve_media,
