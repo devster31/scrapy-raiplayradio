@@ -48,3 +48,19 @@ class Zapping(scrapy.Spider):
                 "desc": episode.css("p::text").get().strip(),
                 "image": response.urljoin(episode.xpath("@data-image").get()),
             }
+            request = scrapy.Request(
+                episode.xpath("@data-mediapolis").get(),
+                callback=self.resolve_media,
+                meta={
+                    "dont_redirect": True,
+                    "handle_httpstatus_list": [302],
+                    "original": item,
+                },
+                cb_kwargs=dict(original=item),
+            )
+            yield request
+
+    def resolve_media(self, response, original):
+        item = original
+        item["url"] = response.headers.get("Location").decode("utf-8")
+        yield item
