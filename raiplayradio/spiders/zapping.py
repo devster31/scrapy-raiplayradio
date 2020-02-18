@@ -7,10 +7,6 @@ class Zapping(scrapy.Spider):
     start_urls = [
         "https://www.raiplayradio.it/programmi/zappingradio1/archivio/puntate/"
     ]
-    cur_page = int()
-    cur_season = int()
-    pages = []
-    seasons = []
 
     def parse(self, response):
         seasons = [
