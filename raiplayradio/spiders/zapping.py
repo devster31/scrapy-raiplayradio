@@ -43,7 +43,7 @@ class Zapping(scrapy.Spider):
             ep.add_css("title", "h3>a::text")
             ep.add_css("date", "span.canale::text")
             ep.add_css("description", "p::text")
-            ep.add_xpath("guid", "@data-uniquename")
+            ep.add_xpath("id", "@data-uniquename")
             img_url = response.urljoin(episode.xpath("@data-image").get())
             ep.add_value("image", img_url)
             item = ep.load_item()

@@ -17,7 +17,7 @@ def parse_date(self, values):
         yield datetime.strptime(value, "%d/%m/%Y")
 
 
-def parse_uuid(self, values):
+def parse_id(self, values):
     for value in values:
         yield value.split("-", 1)[1]
 
@@ -26,7 +26,7 @@ def serialize_date(value):
     return value.date().isoformat()
 
 
-def serialize_uuid(value):
+def serialize_id(value):
     return "urn:uuid:" + str(value)
 
 
@@ -35,7 +35,7 @@ class EpisodeLoader(ItemLoader):
     default_output_processor = TakeFirst()
 
     date_in = parse_date
-    uuid_in = parse_uuid
+    id_in = parse_id
 
 
 class Episode(scrapy.Item):
@@ -44,4 +44,4 @@ class Episode(scrapy.Item):
     date = scrapy.Field(serializer=serialize_date)  # serializer= print UTC date
     description = scrapy.Field()
     image = scrapy.Field()
-    guid = scrapy.Field(serializer=serialize_uuid)
+    id = scrapy.Field(serializer=serialize_id)
