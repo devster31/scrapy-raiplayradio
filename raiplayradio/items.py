@@ -5,10 +5,11 @@
 # See documentation in:
 # https://docs.scrapy.org/en/latest/topics/items.html
 
-import scrapy
-from scrapy.loader.processors import Compose, TakeFirst, MapCompose
-from scrapy.loader import ItemLoader
 from datetime import datetime
+
+import scrapy
+from scrapy.loader import ItemLoader
+from scrapy.loader.processors import Compose, Identity, MapCompose, TakeFirst
 
 
 def parse_date(self, values):

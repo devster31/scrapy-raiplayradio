@@ -1,5 +1,6 @@
 import scrapy
-from raiplayradio.items import Episode, EpisodeLoader
+
+from raiplayradio.items import Episode, EpisodeLoader, Link
 
 
 class Zapping(scrapy.Spider):

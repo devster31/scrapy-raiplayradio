@@ -1,4 +1,3 @@
-
 """
 	<title>Example Feed</title>
 	<subtitle>A subtitle.</subtitle>
@@ -28,10 +27,14 @@
 	</entry>
 
 </feed>"""
+import os
+from datetime import datetime
 
 from scrapy.exporters import XmlItemExporter
+from scrapy.extensions.feedexport import FileFeedStorage
 from scrapy.utils.python import is_listlike
-from datetime import datetime
+from w3lib.url import file_uri_to_path
+
 
 # ------------------------------------------------------------------------------------#
 class AtomItemExporter(XmlItemExporter):
