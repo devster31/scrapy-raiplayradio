@@ -42,6 +42,6 @@ class Episode(scrapy.Item):
     title = scrapy.Field()
     url = scrapy.Field()
     updated = scrapy.Field(serializer=serialize_date)  # serializer= print UTC date
-    description = scrapy.Field()
+    summary = scrapy.Field()
     image = scrapy.Field()
     id = scrapy.Field(serializer=serialize_id)
