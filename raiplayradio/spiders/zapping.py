@@ -40,19 +40,21 @@ class Zapping(scrapy.Spider):
 
     def parse_episodes(self, response):
         for episode in response.css(".archivioPuntate").css("div.row.listaAudio"):
-            ep = EpisodeLoader(item=Episode(), selector=episode)
-            ep.add_css("title", "h3>a::text")
-            ep.add_css("updated", "span.canale::text")
+            ep_loader = EpisodeLoader(item=Episode(), selector=episode)
+            ep_loader.add_css("title", "h3>a::text")
+            ep_loader.add_css("updated", "span.canale::text")
             co_loader = ItemLoader(item=Content(), selector=episode)
-            ep.add_xpath("id", "@data-uniquename")
+            # loader.add_css("summary", "p::text")
             co_loader.add_css("cont", "p::text")
             co_loader.add_value("attr", {"type": "text"})
+            ep_loader.add_value("content", co_loader.load_item())
+            ep_loader.add_xpath("id", "@data-uniquename")
             img_url = response.urljoin(episode.xpath("@data-image").get())
-            ep.add_value("icon", img_url)
+            ep_loader.add_value("icon", img_url)
             # ep.add_value(
             #     "link", Link(rel="related", href=img_url, type="image/jpeg",)
             # )
-            item = ep.load_item()
+            item = ep_loader.load_item()
 
             request = scrapy.Request(
                 episode.xpath("@data-mediapolis").get(),
@@ -62,17 +64,18 @@ class Zapping(scrapy.Spider):
                     "handle_httpstatus_list": [302],
                     "original": item,
                 },
-                cb_kwargs=dict(original=item),
+                cb_kwargs=dict(loader=ep_loader),
             )
             yield request
 
-    def resolve_media(self, response, original):
-        item = original
-        item["link"].append(
+    def resolve_media(self, response, loader):
+        loader.add_value(
+            "link",
             Link(
                 rel="enclosure",
                 href=response.headers.get("Location").decode("utf-8"),
                 type="audio/mpeg",
-            )
+            ),
         )
-        yield item
+
+        yield loader.load_item()
