@@ -34,14 +34,14 @@ class EpisodeLoader(ItemLoader):
     default_input_processor = MapCompose(str.strip)
     default_output_processor = TakeFirst()
 
-    date_in = parse_date
+    updated_in = parse_date
     id_in = parse_id
 
 
 class Episode(scrapy.Item):
     title = scrapy.Field()
     url = scrapy.Field()
-    date = scrapy.Field(serializer=serialize_date)  # serializer= print UTC date
+    updated = scrapy.Field(serializer=serialize_date)  # serializer= print UTC date
     description = scrapy.Field()
     image = scrapy.Field()
     id = scrapy.Field(serializer=serialize_id)

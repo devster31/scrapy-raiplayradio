@@ -41,7 +41,7 @@ class Zapping(scrapy.Spider):
         for episode in response.css(".archivioPuntate").css("div.row.listaAudio"):
             ep = EpisodeLoader(item=Episode(), selector=episode)
             ep.add_css("title", "h3>a::text")
-            ep.add_css("date", "span.canale::text")
+            ep.add_css("updated", "span.canale::text")
             ep.add_css("description", "p::text")
             ep.add_xpath("id", "@data-uniquename")
             img_url = response.urljoin(episode.xpath("@data-image").get())
