@@ -21,6 +21,14 @@ def parse_uuid(self, values):
         yield value.split("-", 1)[1]
 
 
+def serialize_date(value):
+    return value.date().isoformat()
+
+
+def serialize_uuid(value):
+    return "urn:uuid:" + str(value)
+
+
 class EpisodeLoader(ItemLoader):
     default_input_processor = MapCompose(str.strip)
     default_output_processor = TakeFirst()
@@ -32,7 +40,7 @@ class EpisodeLoader(ItemLoader):
 class Episode(scrapy.Item):
     title = scrapy.Field()
     url = scrapy.Field()
-    date = scrapy.Field()  # serializer= print UTC date
+    date = scrapy.Field(serializer=serialize_date)  # serializer= print UTC date
     description = scrapy.Field()
     image = scrapy.Field()
-    uuid = scrapy.Field()
+    guid = scrapy.Field(serializer=serialize_uuid)
