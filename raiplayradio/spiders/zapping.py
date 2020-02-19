@@ -45,7 +45,10 @@ class Zapping(scrapy.Spider):
             ep.add_css("summary", "p::text")
             ep.add_xpath("id", "@data-uniquename")
             img_url = response.urljoin(episode.xpath("@data-image").get())
-            ep.add_value("image", img_url)
+            ep.add_value("icon", img_url)
+            # ep.add_value(
+            #     "link", Link(rel="related", href=img_url, type="image/jpeg",)
+            # )
             item = ep.load_item()
 
             request = scrapy.Request(
