@@ -65,7 +65,8 @@ ROBOTSTXT_OBEY = True
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 # ITEM_PIPELINES = {
-#     "raiplayradio.pipelines.RaiplayRadioPipeline": 300,
+#     # "raiplayradio.pipelines.RaiplayRadioPipeline": 300,
+#     "raiplayradio.pipelines.AtomExportPipeline": 400,
 # }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
@@ -88,3 +89,10 @@ ROBOTSTXT_OBEY = True
 # HTTPCACHE_DIR = 'httpcache'
 # HTTPCACHE_IGNORE_HTTP_CODES = []
 # HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
+
+FEED_URI = "stdout:"
+FEED_FORMAT = "zapping"
+FEED_EXPORTERS = {
+    "atom": "raiplayradio.exporters.AtomItemExporter",
+    "zapping": "raiplayradio.exporters.ZappingExporter",
+}
