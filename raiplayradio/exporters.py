@@ -138,3 +138,11 @@ class ZappingExporter(AtomItemExporter):
         )
         kwargs["uuid"] = "03ed583c-255e-4d63-9e32-ac6f2e1fddf8"
         super(ZappingExporter, self).__init__(*args, **kwargs)
+
+
+class EmptyFileFeedStorage(FileFeedStorage):
+    def open(self, spider):
+        dirname = os.path.dirname(self.path)
+        if dirname and not os.path.exists(dirname):
+            os.makedirs(dirname)
+        return open(self.path, 'wb')

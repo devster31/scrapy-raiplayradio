@@ -90,9 +90,14 @@ ROBOTSTXT_OBEY = True
 # HTTPCACHE_IGNORE_HTTP_CODES = []
 # HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
 
+# Enable and configure Feed Exports
+# See https://docs.scrapy.org/en/latest/topics/feed-exports.html
 FEED_URI = "stdout:"
 FEED_FORMAT = "zapping"
 FEED_EXPORTERS = {
     "atom": "raiplayradio.exporters.AtomItemExporter",
     "zapping": "raiplayradio.exporters.ZappingExporter",
+}
+FEED_STORAGES = {
+    'emptyfile': "raiplayradio.exporters.EmptyFileFeedStorage",
 }
