@@ -103,12 +103,12 @@ class AtomItemExporter(XmlItemExporter):
         self.xg.startElement(self.item_element, {})
         self._beautify_newline()
         for k, v in self._get_serialized_fields(item):
-            if k == "enclosure":
-                for enclosure in v:
-                    attrs = dict(self._get_serialized_fields(enclosure))
+            if k == "link":
+                for link in v:
+                    attrs = dict(self._get_serialized_fields(link))
                     self._beautify_indent(3)
-                    self.xg.startElement("enclosure", attrs)
-                    self.xg.endElement("enclosure")
+                    self.xg.startElement("link", attrs)
+                    self.xg.endElement("link")
                     self._beautify_newline()
             elif k == "content":
                 self._beautify_indent(depth=3)

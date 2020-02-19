@@ -36,11 +36,19 @@ class EpisodeLoader(ItemLoader):
 
     updated_in = parse_date
     id_in = parse_id
+    link_in = Identity()
+    link_out = Identity()
+
+
+class Link(scrapy.Item):
+    rel = scrapy.Field()
+    href = scrapy.Field()
+    type = scrapy.Field()
 
 
 class Episode(scrapy.Item):
     title = scrapy.Field()
-    url = scrapy.Field()
+    link = scrapy.Field()
     updated = scrapy.Field(serializer=serialize_date)  # serializer= print UTC date
     summary = scrapy.Field()
     image = scrapy.Field()

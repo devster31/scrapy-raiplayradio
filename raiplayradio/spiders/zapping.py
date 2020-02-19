@@ -62,5 +62,11 @@ class Zapping(scrapy.Spider):
 
     def resolve_media(self, response, original):
         item = original
-        item["url"] = response.headers.get("Location").decode("utf-8")
+        item["link"].append(
+            Link(
+                rel="enclosure",
+                href=response.headers.get("Location").decode("utf-8"),
+                type="audio/mpeg",
+            )
+        )
         yield item
