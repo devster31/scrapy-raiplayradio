@@ -64,10 +64,11 @@ ROBOTSTXT_OBEY = True
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-# ITEM_PIPELINES = {
-#     # "raiplayradio.pipelines.RaiplayRadioPipeline": 300,
-#     "raiplayradio.pipelines.AtomExportPipeline": 400,
-# }
+ITEM_PIPELINES = {
+    # "raiplayradio.pipelines.RaiplayRadioPipeline": 300,
+    # "raiplayradio.pipelines.AtomExportPipeline": 400,
+    "raiplayradio.pipelines.TimelineExportPipeline": 500,
+}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html
