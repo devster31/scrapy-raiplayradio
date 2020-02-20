@@ -20,6 +20,8 @@ class TimelineExport(FeedExporter):
         super().__init__(settings)
 
     def item_scraped(self, item, spider):
+        slot = self.slot
+        slot.itemcount += 1
         td = self.now - item["updated"]
         self.queue.put(TimelineItem(priority=td, item=item,))
         return item
