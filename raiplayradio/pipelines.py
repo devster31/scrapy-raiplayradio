@@ -34,9 +34,13 @@ class AtomExportPipeline(object):
 
 
 class DateFixPipeline(object):
+    """
+    Episodes older than 2017 don't seem to have the right selector for date.
+    The solution is to try to parse it from the name, which usually contains it.
+    """
     def process_item(self, item, spider):
-        if not item["updated"]:
-            date = re.match(r".*(?P<date>\d{2}\/\d{2}\/\d{4}).*", item["title"]).group(
+        if not "updated" in item:
+            date = re.match(r".*(?P<date>\d{1,2}\/\d{2}\/\d{4}).*", item["title"]).group(
                 "date"
             )
             item["updated"] = datetime.strptime(date, "%d/%m/%Y")
