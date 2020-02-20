@@ -38,6 +38,14 @@ class EpisodeLoader(ItemLoader):
     id_in = parse_id
     link_in = Identity()
     link_out = Identity()
+    content_in = Identity()
+
+
+class Content(scrapy.Item):
+    attr = scrapy.Field(output_processor=TakeFirst())
+    cont = scrapy.Field(
+        input_processor=MapCompose(str.strip), output_processor=TakeFirst()
+    )
 
 
 class Link(scrapy.Item):
@@ -50,6 +58,7 @@ class Episode(scrapy.Item):
     title = scrapy.Field()
     link = scrapy.Field()
     updated = scrapy.Field(serializer=serialize_date)  # serializer= print UTC date
-    summary = scrapy.Field()
+    summary = scrapy.Field()  # ? unused
+    content = scrapy.Field()
     icon = scrapy.Field()
     id = scrapy.Field(serializer=serialize_id)

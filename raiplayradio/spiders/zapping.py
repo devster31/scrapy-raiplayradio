@@ -1,6 +1,7 @@
 import scrapy
+from scrapy.loader import ItemLoader
 
-from raiplayradio.items import Episode, EpisodeLoader, Link
+from raiplayradio.items import Content, Episode, EpisodeLoader, Link
 
 
 class Zapping(scrapy.Spider):
@@ -42,8 +43,10 @@ class Zapping(scrapy.Spider):
             ep = EpisodeLoader(item=Episode(), selector=episode)
             ep.add_css("title", "h3>a::text")
             ep.add_css("updated", "span.canale::text")
-            ep.add_css("summary", "p::text")
+            co_loader = ItemLoader(item=Content(), selector=episode)
             ep.add_xpath("id", "@data-uniquename")
+            co_loader.add_css("cont", "p::text")
+            co_loader.add_value("attr", {"type": "text"})
             img_url = response.urljoin(episode.xpath("@data-image").get())
             ep.add_value("icon", img_url)
             # ep.add_value(

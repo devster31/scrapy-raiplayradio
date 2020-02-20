@@ -111,10 +111,11 @@ class AtomItemExporter(XmlItemExporter):
                     self.xg.endElement("link")
                     self._beautify_newline()
             elif k == "content":
+                el = dict(self._get_serialized_fields(v))
                 self._beautify_indent(depth=3)
-                self.xg.startElement("content:encoded", {})
-                self.xg.ignorableWhitespace(v)
-                self.xg.endElement("content:encoded")
+                self.xg.startElement("content", el["attr"])
+                self.xg.ignorableWhitespace(el["cont"])
+                self.xg.endElement("content")
                 self._beautify_newline()
             else:
                 self._export_xml_field(k, v, 3)
