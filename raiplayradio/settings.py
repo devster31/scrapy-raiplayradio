@@ -60,6 +60,7 @@ ROBOTSTXT_OBEY = True
 # See https://docs.scrapy.org/en/latest/topics/extensions.html
 EXTENSIONS = {
     "scrapy.extensions.telnet.TelnetConsole": None,
+    'scrapy.extensions.feedexport.FeedExporter': None,
     "raiplayradio.extensions.TimelineExport": 100,
 }
 
