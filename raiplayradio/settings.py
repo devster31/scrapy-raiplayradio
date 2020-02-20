@@ -58,16 +58,17 @@ ROBOTSTXT_OBEY = True
 
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html
-# EXTENSIONS = {
-#    'scrapy.extensions.telnet.TelnetConsole': None,
-# }
+EXTENSIONS = {
+    "scrapy.extensions.telnet.TelnetConsole": None,
+    "raiplayradio.extensions.TimelineExport": 100,
+}
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
     # "raiplayradio.pipelines.RaiplayRadioPipeline": 300,
     # "raiplayradio.pipelines.AtomExportPipeline": 400,
-    "raiplayradio.pipelines.TimelineExportPipeline": 500,
+    "raiplayradio.pipelines.DateFixPipeline": 500,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
