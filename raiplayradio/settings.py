@@ -95,11 +95,12 @@ ITEM_PIPELINES = {
 # Enable and configure Feed Exports
 # See https://docs.scrapy.org/en/latest/topics/feed-exports.html
 FEED_URI = "stdout:"
+FEED_STORE_EMPTY = True
 FEED_FORMAT = "zapping"
 FEED_EXPORTERS = {
     "atom": "raiplayradio.exporters.AtomItemExporter",
     "zapping": "raiplayradio.exporters.ZappingExporter",
 }
 FEED_STORAGES = {
-    'emptyfile': "raiplayradio.exporters.EmptyFileFeedStorage",
+    "emptyfile": "raiplayradio.exporters.EmptyFileFeedStorage",
 }
