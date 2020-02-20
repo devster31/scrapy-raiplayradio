@@ -8,6 +8,7 @@
 #     https://docs.scrapy.org/en/latest/topics/settings.html
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
+import scrapy
 
 BOT_NAME = "raiplayradio"
 
@@ -17,7 +18,10 @@ NEWSPIDER_MODULE = "raiplayradio.spiders"
 LOG_LEVEL = "INFO"
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-USER_AGENT = "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.87 Safari/537.36"
+USER_AGENT = (
+    "User-Agent: Scrapy/{} (+https://scrapy.org) Mozilla/5.0 "
+    "Chrome/80.0.3987.87 Safari/537.36"
+).format(scrapy.__version__)
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
