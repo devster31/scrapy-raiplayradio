@@ -42,7 +42,7 @@ jobs:
       - name: Scrape
         run: >-
           python3 -m scrapy crawl ${{ matrix.feed }}
-          -o 'emptyfile://${{ github.workspace }}/${{ matrix.feed }}.atom'
+          -o 'emptyfile://${{ github.workspace }}/dist/${{ matrix.feed }}.atom'
           -t ${{ matrix.feed }} --loglevel=INFO
 
       - uses: jakejarvis/s3-sync-action@v0.5.1
@@ -53,7 +53,7 @@ jobs:
           # optional: defaults to us-east-1
           AWS_REGION: ${{ secrets.AWS_REGION }}
           # optional: defaults to entire repository
-          SOURCE_DIR: ${{ github.workspace }}/${{ matrix.feed }}.atom
+          SOURCE_DIR: ${{ github.workspace }}/dist
         with:
           args: --delete
 ...
