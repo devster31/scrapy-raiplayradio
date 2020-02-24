@@ -6,6 +6,7 @@ from raiplayradio.items import Content, Episode, EpisodeLoader, Link
 
 class Zapping(scrapy.Spider):
     name = "zapping"
+    # TODO: check whether this can be parametrized
     start_urls = [
         "https://www.raiplayradio.it/programmi/zappingradio1/archivio/puntate/"
     ]

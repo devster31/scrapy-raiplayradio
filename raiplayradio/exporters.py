@@ -8,6 +8,9 @@ from w3lib.url import file_uri_to_path
 
 
 class AtomItemExporter(XmlItemExporter):
+    """Adapted from https://github.com/ljanyst/scrapy-rss-exporter
+    """
+
     def __init__(self, *args, **kwargs):
         kwargs["root_element"] = "feed"
         kwargs["item_element"] = "entry"
@@ -92,6 +95,7 @@ class AtomItemExporter(XmlItemExporter):
 
 class ZappingExporter(AtomItemExporter):
     def __init__(self, *args, **kwargs):
+        # TODO: parametrize or scrape
         kwargs["title"] = "Zapping Radio 1"
         kwargs["link"] = "https://www.raiplayradio.it/programmi/zappingradio1"
         kwargs["url"] = "https://dispenser.ovh/podcasts/zapping/feed.atom"
