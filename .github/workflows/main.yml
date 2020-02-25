@@ -55,5 +55,5 @@ jobs:
           # optional: defaults to entire repository
           SOURCE_DIR: ${{ github.workspace }}/dist
         with:
-          args: --delete
+          args: --delete --content-type application/atom+xml
 ...
