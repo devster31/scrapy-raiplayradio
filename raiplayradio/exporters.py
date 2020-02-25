@@ -5,25 +5,27 @@ from scrapy.exporters import XmlItemExporter
 from scrapy.extensions.feedexport import FileFeedStorage
 from scrapy.utils.python import is_listlike
 from w3lib.url import file_uri_to_path
+from xml.sax.saxutils import XMLGenerator
 
 
 class AtomItemExporter(XmlItemExporter):
     """Adapted from https://github.com/ljanyst/scrapy-rss-exporter
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, file, *args, **kwargs):
         kwargs["root_element"] = "feed"
         kwargs["item_element"] = "entry"
 
         now = datetime.now().astimezone().isoformat(timespec="seconds")
         self.title = kwargs.pop("title", "Dummy")
-        self.link = kwargs.pop("link", "http://dummy.site")
+        # self.link = kwargs.pop("link", "http://dummy.site")
         self.url = kwargs.pop("url", "http://dummy.site/feed.atom")
         self.uuid = kwargs.pop("uuid", "random-uuid")
         self.description = kwargs.pop("description", "Dummy")
         self.updated = kwargs.pop("updated", now)
 
-        super(AtomItemExporter, self).__init__(*args, **kwargs)
+        super().__init__(file, *args, **kwargs)
+        self.xg = XMLGenerator(file, encoding=self.encoding, short_empty_elements=True)
         self.indent = 2
 
     def _export_xml_field(self, name, serialized_value, depth, attrs=dict()):
@@ -41,6 +43,8 @@ class AtomItemExporter(XmlItemExporter):
             self._beautify_indent(depth=depth)
         elif isinstance(serialized_value, str):
             self.xg.characters(serialized_value)
+        elif serialized_value is None:
+            pass
         else:
             self.xg.characters(str(serialized_value))
         self.xg.endElement(name)
@@ -62,8 +66,8 @@ class AtomItemExporter(XmlItemExporter):
         self._export_xml_field("title", self.title, 2)
         self._export_xml_field(
             "link",
-            self.link,
-            2,
+            None,
+            depth=2,
             attrs={"rel": "self", "type": "application/atom+xml", "href": self.url},
         )  # <link rel="self" type="application/atom+xml" href="<self.url>">
         self._export_xml_field("subtitle", self.description, 2)
