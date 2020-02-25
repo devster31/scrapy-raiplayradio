@@ -49,7 +49,11 @@ class AtomItemExporter(XmlItemExporter):
     def start_exporting(self):
         self.xg.startDocument()  # <?xml version="1.0" encoding="utf-8"?>
         self.xg.startElement(
-            self.root_element, {"xmlns": "http://www.w3.org/2005/Atom"}
+            self.root_element,
+            {
+                "xmlns": "http://www.w3.org/2005/Atom",
+                "xmlns:media": "http://search.yahoo.com/mrss/",
+            },
         )  # <feed xmlns="http://www.w3.org/2005/Atom">
 
         self._beautify_newline()  # \n
@@ -79,6 +83,11 @@ class AtomItemExporter(XmlItemExporter):
                     self.xg.startElement("link", attrs)
                     self.xg.endElement("link")
                     self._beautify_newline()
+            elif k == "image":
+                self._beautify_indent(3)
+                self.xg.startElement("media:thumbnail", {"url": v})
+                self.xg.endElement("media:thumbnail")
+                self._beautify_newline()
             elif k == "content":
                 el = dict(self._get_serialized_fields(v))
                 self._beautify_indent(depth=3)

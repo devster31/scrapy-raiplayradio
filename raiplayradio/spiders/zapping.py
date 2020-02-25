@@ -51,7 +51,7 @@ class Zapping(scrapy.Spider):
             ep_loader.add_value("content", co_loader.load_item())
             ep_loader.add_xpath("id", "@data-uniquename")
             img_url = response.urljoin(episode.xpath("@data-image").get())
-            ep_loader.add_value("icon", img_url)
+            ep_loader.add_value("image", img_url)
             # ep.add_value(
             #     "link", Link(rel="related", href=img_url, type="image/jpeg",)
             # )

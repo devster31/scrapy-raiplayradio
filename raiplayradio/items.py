@@ -60,5 +60,5 @@ class Episode(scrapy.Item):
     updated = scrapy.Field(serializer=serialize_date)  # serializer= print UTC date
     summary = scrapy.Field()  # ? unused
     content = scrapy.Field()
-    icon = scrapy.Field()
+    image = scrapy.Field()
     id = scrapy.Field(serializer=serialize_id)
