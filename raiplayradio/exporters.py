@@ -87,6 +87,15 @@ class AtomItemExporter(XmlItemExporter):
                     self.xg.startElement("link", attrs)
                     self.xg.endElement("link")
                     self._beautify_newline()
+            elif k == "authors":
+                for author in v:
+                    self._beautify_indent(3)
+                    self.xg.startElement("author", {})
+                    self._beautify_newline()
+                    for key, value in author.items():
+                        self._export_xml_field(key, value, 4)
+                    self.xg.endElement("author")
+                    self._beautify_newline()
             elif k == "image":
                 self._beautify_indent(3)
                 self.xg.startElement("media:thumbnail", {"url": v})
@@ -94,7 +103,7 @@ class AtomItemExporter(XmlItemExporter):
                 self._beautify_newline()
             elif k == "content":
                 el = dict(self._get_serialized_fields(v))
-                self._beautify_indent(depth=3)
+                self._beautify_indent(3)
                 self.xg.startElement("content", el["attr"])
                 self.xg.ignorableWhitespace(el["cont"])
                 self.xg.endElement("content")
@@ -110,7 +119,7 @@ class ZappingExporter(AtomItemExporter):
     def __init__(self, *args, **kwargs):
         # TODO: parametrize or scrape
         kwargs["title"] = "Zapping Radio 1"
-        kwargs["link"] = "https://www.raiplayradio.it/programmi/zappingradio1"
+        # kwargs["link"] = "https://www.raiplayradio.it/programmi/zappingradio1"
         kwargs["url"] = "https://dispenser.ovh/podcasts/zapping/feed.atom"
         kwargs["description"] = (
             "Conduce Giancarlo Loquenzi\n"

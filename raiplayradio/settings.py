@@ -73,6 +73,7 @@ EXTENSIONS = {
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
     "raiplayradio.pipelines.DateFixPipeline": 500,
+    "raiplayradio.pipelines.EmptyAuthorFixPipeline": 600,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

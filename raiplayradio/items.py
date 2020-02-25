@@ -39,6 +39,8 @@ class EpisodeLoader(ItemLoader):
     link_in = Identity()
     link_out = Identity()
     content_in = Identity()
+    authors_in = Identity()
+    authors_out = Identity()
 
 
 class Content(scrapy.Item):
@@ -61,4 +63,5 @@ class Episode(scrapy.Item):
     summary = scrapy.Field()  # ? unused
     content = scrapy.Field()
     image = scrapy.Field()
+    authors = scrapy.Field()
     id = scrapy.Field(serializer=serialize_id)

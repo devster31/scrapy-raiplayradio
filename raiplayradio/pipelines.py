@@ -40,3 +40,14 @@ class DateFixPipeline(object):
                 date = "/".join(list(pdate))
                 item["updated"] = datetime.strptime(date, "%d/%m/%Y")
         return item
+
+
+class EmptyAuthorFixPipeline(object):
+    """
+    If no author for epixodes, add default value.
+    """
+
+    def process_item(self, item, spider):
+        if not "authors" in item:
+            item["authors"] = [{"name": "RAI"}]
+        return item
