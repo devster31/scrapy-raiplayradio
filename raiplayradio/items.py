@@ -5,6 +5,7 @@
 # See documentation in:
 # https://docs.scrapy.org/en/latest/topics/items.html
 
+import xml.sax.saxutils
 from datetime import datetime
 
 import scrapy
@@ -46,7 +47,8 @@ class EpisodeLoader(ItemLoader):
 class Content(scrapy.Item):
     attr = scrapy.Field(output_processor=TakeFirst())
     cont = scrapy.Field(
-        input_processor=MapCompose(str.strip), output_processor=TakeFirst()
+        input_processor=MapCompose(str.strip, xml.sax.saxutils.escape),
+        output_processor=TakeFirst(),
     )
 
 
