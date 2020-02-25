@@ -15,7 +15,7 @@ class AtomItemExporter(XmlItemExporter):
         kwargs["root_element"] = "feed"
         kwargs["item_element"] = "entry"
 
-        now = datetime.now().isoformat(timespec="seconds")
+        now = datetime.now().astimezone().isoformat(timespec="seconds")
         self.title = kwargs.pop("title", "Dummy")
         self.link = kwargs.pop("link", "http://dummy.site")
         self.url = kwargs.pop("url", "http://dummy.site/feed.atom")

@@ -23,7 +23,7 @@ def parse_id(self, values):
 
 
 def serialize_date(value):
-    return value.date().isoformat()
+    return value.astimezone().isoformat()
 
 
 def serialize_id(value):
