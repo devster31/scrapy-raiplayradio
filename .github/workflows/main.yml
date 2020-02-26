@@ -42,7 +42,7 @@ jobs:
       - name: Scrape
         run: >-
           python3 -m scrapy crawl ${{ matrix.feed }}
-          -o 'emptyfile://${{ github.workspace }}/dist/${{ matrix.feed }}.atom'
+          -o 'emptyfile://${{ github.workspace }}/dist/${{ matrix.feed }}.rss'
           -t ${{ matrix.feed }} --loglevel=INFO
 
       - uses: jakejarvis/s3-sync-action@v0.5.1
@@ -55,5 +55,5 @@ jobs:
           # optional: defaults to entire repository
           SOURCE_DIR: ${{ github.workspace }}/dist
         with:
-          args: --delete --content-type application/atom+xml
+          args: --delete --content-type application/rss+xml
 ...
