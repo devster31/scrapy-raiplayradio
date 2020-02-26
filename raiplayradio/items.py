@@ -18,25 +18,11 @@ def parse_date(self, values):
         yield datetime.strptime(value, "%d/%m/%Y")
 
 
-def parse_id(self, values):
-    for value in values:
-        yield value.split("-", 1)[1]
-
-
-# def serialize_date(value):
-#     return value.astimezone().isoformat()
-
-
-def serialize_id(value):
-    return "urn:uuid:" + str(value)
-
-
 class EpisodeLoader(ItemLoader):
     default_input_processor = MapCompose(str.strip)
     default_output_processor = TakeFirst()
 
     date_in = parse_date
-    guid_in = parse_id
     content_in = Identity()
     link_in = Identity()
     link_out = Identity()
@@ -58,7 +44,7 @@ class Enclosure(scrapy.Item):
 class Episode(scrapy.Item):
     title = scrapy.Field()
     link = scrapy.Field()
-    guid = scrapy.Field(serializer=serialize_id)
+    guid = scrapy.Field()
     enclosure = scrapy.Field()
     # date = scrapy.Field(serializer=serialize_date)  # serializer= print UTC date
     date = scrapy.Field()

@@ -78,15 +78,17 @@ class RssItemExporter(XmlItemExporter):
             if k == "enclosure":
                 for enclosure in v:
                     attrs = dict(self._get_serialized_fields(enclosure))
+                    if "length" not in attrs:
+                        attrs["length"] = "0"
                     self._beautify_indent(3)
                     self.xg.startElement("enclosure", attrs)
                     self.xg.endElement("enclosure")
                     self._beautify_newline()
             elif k == "link":
                 for link in v:
-                    attrs = dict(self._get_serialized_fields(link))
                     self._beautify_indent(3)
-                    self.xg.startElement("link", attrs)
+                    self.xg.startElement("link", {})
+                    self._xg_characters(str(link))
                     self.xg.endElement("link")
                     self._beautify_newline()
             elif k == "image":
