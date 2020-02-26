@@ -22,12 +22,12 @@ class DateFixPipeline(object):
     """
 
     def process_item(self, item, spider):
-        if not "updated" in item:
+        if not "date" in item:
             try:
                 date = re.match(
                     r".*?(?P<date>\d{1,2}\/\d{2}\/\d{4}).*", item["title"]
                 ).group("date")
-                item["updated"] = datetime.strptime(date, "%d/%m/%Y")
+                item["date"] = datetime.strptime(date, "%d/%m/%Y")
             except AttributeError as err:
                 spider.log(
                     "Date malformed while processing\n{}\n...retrying".format(item),
@@ -38,16 +38,5 @@ class DateFixPipeline(object):
                     item["title"],
                 ).groups()[1:]
                 date = "/".join(list(pdate))
-                item["updated"] = datetime.strptime(date, "%d/%m/%Y")
-        return item
-
-
-class EmptyAuthorFixPipeline(object):
-    """
-    If no author for epixodes, add default value.
-    """
-
-    def process_item(self, item, spider):
-        if not "authors" in item:
-            item["authors"] = [{"name": "RAI"}]
+                item["date"] = datetime.strptime(date, "%d/%m/%Y")
         return item

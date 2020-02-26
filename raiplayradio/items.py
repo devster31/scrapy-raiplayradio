@@ -23,8 +23,8 @@ def parse_id(self, values):
         yield value.split("-", 1)[1]
 
 
-def serialize_date(value):
-    return value.astimezone().isoformat()
+# def serialize_date(value):
+#     return value.astimezone().isoformat()
 
 
 def serialize_id(value):
@@ -35,21 +35,13 @@ class EpisodeLoader(ItemLoader):
     default_input_processor = MapCompose(str.strip)
     default_output_processor = TakeFirst()
 
-    updated_in = parse_date
-    id_in = parse_id
+    date_in = parse_date
+    guid_in = parse_id
+    content_in = Identity()
     link_in = Identity()
     link_out = Identity()
-    content_in = Identity()
-    authors_in = Identity()
-    authors_out = Identity()
-
-
-class Content(scrapy.Item):
-    attr = scrapy.Field(output_processor=TakeFirst())
-    cont = scrapy.Field(
-        input_processor=MapCompose(str.strip, xml.sax.saxutils.escape),
-        output_processor=TakeFirst(),
-    )
+    enclosure_in = Identity()
+    enclosure_out = Identity()
 
 
 class Link(scrapy.Item):
@@ -58,12 +50,19 @@ class Link(scrapy.Item):
     type = scrapy.Field()
 
 
+class Enclosure(scrapy.Item):
+    url = scrapy.Field()
+    type = scrapy.Field()
+
+
 class Episode(scrapy.Item):
     title = scrapy.Field()
     link = scrapy.Field()
-    updated = scrapy.Field(serializer=serialize_date)  # serializer= print UTC date
-    summary = scrapy.Field()  # ? unused
-    content = scrapy.Field()
+    guid = scrapy.Field(serializer=serialize_id)
+    enclosure = scrapy.Field()
+    # date = scrapy.Field(serializer=serialize_date)  # serializer= print UTC date
+    date = scrapy.Field()
+    description = scrapy.Field(
+        input_processor=MapCompose(str.strip, xml.sax.saxutils.escape),
+    )
     image = scrapy.Field()
-    authors = scrapy.Field()
-    id = scrapy.Field(serializer=serialize_id)

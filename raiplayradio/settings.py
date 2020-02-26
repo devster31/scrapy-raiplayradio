@@ -73,7 +73,6 @@ EXTENSIONS = {
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
     "raiplayradio.pipelines.DateFixPipeline": 500,
-    "raiplayradio.pipelines.EmptyAuthorFixPipeline": 600,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
@@ -103,7 +102,7 @@ FEED_URI = "stdout:"
 FEED_STORE_EMPTY = True
 FEED_FORMAT = "zapping"
 FEED_EXPORTERS = {
-    "atom": "raiplayradio.exporters.AtomItemExporter",
+    "rss": "raiplayradio.exporters.RssItemExporter",
     "zapping": "raiplayradio.exporters.ZappingExporter",
 }
 FEED_STORAGES = {

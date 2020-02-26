@@ -8,105 +8,101 @@ from w3lib.url import file_uri_to_path
 from xml.sax.saxutils import XMLGenerator
 
 
-class AtomItemExporter(XmlItemExporter):
+class RssItemExporter(XmlItemExporter):
     """Adapted from https://github.com/ljanyst/scrapy-rss-exporter
     """
 
     def __init__(self, file, *args, **kwargs):
-        kwargs["root_element"] = "feed"
-        kwargs["item_element"] = "entry"
+        kwargs["item_element"] = "item"
+        self.channel_element = "channel"
+        self.date_format = "%a, %d %b %Y %H:%M:%S %z"
 
-        now = datetime.now().astimezone().isoformat(timespec="seconds")
-        self.title = kwargs.pop("title", "Dummy")
-        # self.link = kwargs.pop("link", "http://dummy.site")
-        self.url = kwargs.pop("url", "http://dummy.site/feed.atom")
-        self.uuid = kwargs.pop("uuid", "random-uuid")
-        self.description = kwargs.pop("description", "Dummy")
-        self.updated = kwargs.pop("updated", now)
+        now = datetime.now().astimezone().strftime(self.date_format)
+        self.title = kwargs.pop("title", "Dummy Channel")
+        self.link = kwargs.pop("link", "http://dummy.site")
+        self.description = kwargs.pop("description", "Dummy Description")
+        self.language = kwargs.pop("language", "en-us")
+        self.build_date = kwargs.pop("pub_date", now)
+        self.category = kwargs.pop("category", None)
+        self.author = kwargs.pop("author", None)
 
         super().__init__(file, *args, **kwargs)
         self.xg = XMLGenerator(file, encoding=self.encoding, short_empty_elements=True)
         self.indent = 2
-
-    def _export_xml_field(self, name, serialized_value, depth, attrs=dict()):
-        self._beautify_indent(depth=depth)
-        self.xg.startElement(name, attrs)
-        if hasattr(serialized_value, "items"):
-            self._beautify_newline()
-            for subname, value in serialized_value.items():
-                self._export_xml_field(subname, value, depth=depth + 1)
-            self._beautify_indent(depth=depth)
-        elif is_listlike(serialized_value):
-            self._beautify_newline()
-            for value in serialized_value:
-                self._export_xml_field("value", value, depth=depth + 1)
-            self._beautify_indent(depth=depth)
-        elif isinstance(serialized_value, str):
-            self.xg.characters(serialized_value)
-        elif serialized_value is None:
-            pass
-        else:
-            self.xg.characters(str(serialized_value))
-        self.xg.endElement(name)
-        self._beautify_newline()
+        self.indent = 2
 
     def start_exporting(self):
-        self.xg.startDocument()  # <?xml version="1.0" encoding="utf-8"?>
+        self.xg.startDocument()
         self.xg.startElement(
             self.root_element,
             {
-                "xmlns": "http://www.w3.org/2005/Atom",
+                "version": "2.0",
+                "xmlns:content": "http://purl.org/rss/1.0/modules/content/",
                 "xmlns:media": "http://search.yahoo.com/mrss/",
+                "xmlns:itunes": "http://www.itunes.com/dtds/podcast-1.0.dtd",
             },
-        )  # <feed xmlns="http://www.w3.org/2005/Atom">
-
-        self._beautify_newline()  # \n
-        # self._beautify_indent(1)  # 2 spaces, 1 indent
+        )
+        self._beautify_newline()
+        self._beautify_indent(1)
+        self.xg.startElement(self.channel_element, {})
+        self._beautify_newline()
 
         self._export_xml_field("title", self.title, 2)
-        self._export_xml_field(
-            "link",
-            None,
-            depth=2,
-            attrs={"rel": "self", "type": "application/atom+xml", "href": self.url},
-        )  # <link rel="self" type="application/atom+xml" href="<self.url>">
-        self._export_xml_field("subtitle", self.description, 2)
-        self._export_xml_field("updated", self.updated, 2)
-        urn_id = "urn:uuid:" + self.uuid
-        self._export_xml_field("id", urn_id, 2)
+        self._export_xml_field("link", self.link, 2)
+        self._export_xml_field("description", self.description, 2)
+        self._export_xml_field("pubDate", self.build_date, 2)
+        self._export_xml_field("lastBuildDate", self.build_date, 2)
+        if self.category is not None:
+            for t in self.category:
+                self._beautify_indent(2)
+                self.xg.startElement("itunes:category", {"text": t})
+                self.xg.endElement("itunes:category")
+                self._beautify_newline()
+        if self.author is not None:
+            self._beautify_indent(2)
+            self.xg.startElement("itunes:author", {})
+            self._xg_characters(str(self.author))
+            self.xg.endElement("itunes:author")
+            self._beautify_newline()
+            self._beautify_indent(2)
+            self.xg.startElement("author", {})
+            self._xg_characters(str(self.author))
+            self.xg.endElement("author")
+            self._beautify_newline()
 
     def export_item(self, item):
         self._beautify_indent(2)
         self.xg.startElement(self.item_element, {})
         self._beautify_newline()
         for k, v in self._get_serialized_fields(item):
-            if k == "link":
+            if k == "enclosure":
+                for enclosure in v:
+                    attrs = dict(self._get_serialized_fields(enclosure))
+                    self._beautify_indent(3)
+                    self.xg.startElement("enclosure", attrs)
+                    self.xg.endElement("enclosure")
+                    self._beautify_newline()
+            elif k == "link":
                 for link in v:
                     attrs = dict(self._get_serialized_fields(link))
                     self._beautify_indent(3)
                     self.xg.startElement("link", attrs)
                     self.xg.endElement("link")
                     self._beautify_newline()
-            elif k == "authors":
-                for author in v:
-                    self._beautify_indent(3)
-                    self.xg.startElement("author", {})
-                    self._beautify_newline()
-                    for key, value in author.items():
-                        self._export_xml_field(key, value, 4)
-                    self.xg.endElement("author")
-                    self._beautify_newline()
             elif k == "image":
                 self._beautify_indent(3)
                 self.xg.startElement("media:thumbnail", {"url": v})
                 self.xg.endElement("media:thumbnail")
                 self._beautify_newline()
-            elif k == "content":
-                el = dict(self._get_serialized_fields(v))
                 self._beautify_indent(3)
-                self.xg.startElement("content", el["attr"])
-                self.xg.ignorableWhitespace(el["cont"])
-                self.xg.endElement("content")
+                self.xg.startElement("itunes:image", {"href": v})
+                self.xg.endElement("itunes:image")
+                self._beautify_newline()
+            elif k == "date":
+                self._beautify_indent(3)
+                self.xg.startElement("pubDate", {})
+                self._xg_characters(v.astimezone().strftime(self.date_format))
+                self.xg.endElement("pubDate")
                 self._beautify_newline()
             else:
                 self._export_xml_field(k, v, 3)
@@ -114,13 +110,17 @@ class AtomItemExporter(XmlItemExporter):
         self.xg.endElement(self.item_element)
         self._beautify_newline()
 
+    def finish_exporting(self):
+        self.xg.endElement(self.channel_element)
+        self.xg.endElement(self.root_element)
+        self.xg.endDocument()
 
-class ZappingExporter(AtomItemExporter):
+
+class ZappingExporter(RssItemExporter):
     def __init__(self, *args, **kwargs):
-        # TODO: parametrize or scrape
+        # TODO: parametrize or scrape possible?
         kwargs["title"] = "Zapping Radio 1"
-        # kwargs["link"] = "https://www.raiplayradio.it/programmi/zappingradio1"
-        kwargs["url"] = "https://dispenser.ovh/podcasts/zapping/feed.atom"
+        kwargs["link"] = "https://www.raiplayradio.it/programmi/zappingradio1"
         kwargs["description"] = (
             "Conduce Giancarlo Loquenzi\n"
             "In redazione: Alessandro Allegra, Daniela Mecenate, Nicolò Randazzo e "
@@ -129,8 +129,10 @@ class ZappingExporter(AtomItemExporter):
             "raccontati, commentati e discussi con ospiti e ascoltatori. Zapping Radio 1, "
             "tutte le notizie senza cambiare canale."
         )
-        kwargs["uuid"] = "03ed583c-255e-4d63-9e32-ac6f2e1fddf8"
-        super(ZappingExporter, self).__init__(*args, **kwargs)
+        kwargs["language"] = "it-it"
+        kwargs["category"] = ["News"]
+        kwargs["author"] = "Rai Radio 1"
+        super().__init__(*args, **kwargs)
 
 
 class EmptyFileFeedStorage(FileFeedStorage):

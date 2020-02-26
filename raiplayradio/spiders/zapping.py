@@ -1,7 +1,8 @@
-import scrapy
-from scrapy.loader import ItemLoader
+# -*- coding: utf-8 -*-
 
-from raiplayradio.items import Content, Episode, EpisodeLoader, Link
+import scrapy
+
+from raiplayradio.items import Episode, EpisodeLoader, Enclosure, Link
 
 
 class Zapping(scrapy.Spider):
@@ -10,8 +11,11 @@ class Zapping(scrapy.Spider):
     start_urls = [
         "https://www.raiplayradio.it/programmi/zappingradio1/archivio/puntate/"
     ]
+    podcast_uuid = str()
 
     def parse(self, response):
+        self.podcast_uuid = response.xpath("body/@data-id").get().split("-", 1)[1]
+
         seasons = [
             dict(
                 {
@@ -43,39 +47,28 @@ class Zapping(scrapy.Spider):
         for episode in response.css(".archivioPuntate").css("div.row.listaAudio"):
             ep_loader = EpisodeLoader(item=Episode(), selector=episode)
             ep_loader.add_css("title", "h3>a::text")
-            ep_loader.add_css("updated", "span.canale::text")
-            co_loader = ItemLoader(item=Content(), selector=episode)
-            # loader.add_css("summary", "p::text")
-            co_loader.add_css("cont", "p::text")
-            co_loader.add_value("attr", {"type": "text"})
-            ep_loader.add_value("content", co_loader.load_item())
-            ep_loader.add_xpath("id", "@data-uniquename")
+            link = response.urljoin(episode.xpath("@data-href").get())
+            ep_loader.add_value("link", Link(href=link))
+            ep_loader.add_xpath("guid", "@data-uniquename")
+            ep_loader.add_css("date", "span.canale::text")
+            ep_loader.add_css("description", "p::text")
             img_url = response.urljoin(episode.xpath("@data-image").get())
             ep_loader.add_value("image", img_url)
-            # ep.add_value(
-            #     "link", Link(rel="related", href=img_url, type="image/jpeg",)
-            # )
             item = ep_loader.load_item()
 
             request = scrapy.Request(
                 episode.xpath("@data-mediapolis").get(),
                 callback=self.resolve_media,
-                meta={
-                    "dont_redirect": True,
-                    "handle_httpstatus_list": [302],
-                    "original": item,
-                },
+                meta={"dont_redirect": True, "handle_httpstatus_list": [302]},
                 cb_kwargs=dict(loader=ep_loader),
             )
             yield request
 
     def resolve_media(self, response, loader):
         loader.add_value(
-            "link",
-            Link(
-                rel="enclosure",
-                href=response.headers.get("Location").decode("utf-8"),
-                type="audio/mpeg",
+            "enclosure",
+            Enclosure(
+                url=response.headers.get("Location").decode("utf-8"), type="audio/mpeg",
             ),
         )
 
