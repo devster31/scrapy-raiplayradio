@@ -65,11 +65,6 @@ class RssItemExporter(XmlItemExporter):
             self._xg_characters(str(self.author))
             self.xg.endElement("itunes:author")
             self._beautify_newline()
-            self._beautify_indent(2)
-            self.xg.startElement("author", {})
-            self._xg_characters(str(self.author))
-            self.xg.endElement("author")
-            self._beautify_newline()
 
     def export_item(self, item):
         self._beautify_indent(2)
