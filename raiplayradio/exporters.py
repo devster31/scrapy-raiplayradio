@@ -13,6 +13,7 @@ class RssItemExporter(XmlItemExporter):
     """
 
     def __init__(self, file, *args, **kwargs):
+        kwargs["root_element"] = "rss"
         kwargs["item_element"] = "item"
         self.channel_element = "channel"
         self.date_format = "%a, %d %b %Y %H:%M:%S %z"
@@ -113,7 +114,9 @@ class RssItemExporter(XmlItemExporter):
         self._beautify_newline()
 
     def finish_exporting(self):
+        self._beautify_indent(1)
         self.xg.endElement(self.channel_element)
+        self._beautify_newline()
         self.xg.endElement(self.root_element)
         self.xg.endDocument()
 
