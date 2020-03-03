@@ -26,6 +26,7 @@ class RssItemExporter(XmlItemExporter):
         self.build_date = kwargs.pop("pub_date", now)
         self.category = kwargs.pop("category", None)
         self.author = kwargs.pop("author", None)
+        self.pod_image = kwargs.pop("image", None)
 
         super().__init__(file, *args, **kwargs)
         self.xg = XMLGenerator(file, encoding=self.encoding, short_empty_elements=True)
@@ -64,6 +65,14 @@ class RssItemExporter(XmlItemExporter):
             self.xg.startElement("itunes:author", {})
             self._xg_characters(str(self.author))
             self.xg.endElement("itunes:author")
+            self._beautify_newline()
+        if self.pod_image is not None:
+            self._beautify_indent(2)
+            self.xg.startElement("image", {})
+            self._beautify_newline()
+            self._export_xml_field("url", self.pod_image, 3)
+            self._beautify_indent(2)
+            self.xg.endElement("image")
             self._beautify_newline()
 
     def export_item(self, item):
@@ -132,6 +141,9 @@ class ZappingExporter(RssItemExporter):
         kwargs["language"] = "it-it"
         kwargs["category"] = ["News"]
         kwargs["author"] = "Rai Radio 1"
+        kwargs[
+            "image"
+        ] = "https://www.raiplayradio.it/cropgd/252x252/dl/img/2017/12/14/1513257688023_15-radio1-zapping-01.jpg"
         super().__init__(*args, **kwargs)
 
 
